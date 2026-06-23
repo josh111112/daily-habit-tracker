@@ -1,0 +1,75 @@
+<main class="dashboard">
+  <header class="top-bar">
+    <div class="title-section">
+      <h1>HabitFlow ✨</h1>
+      <p>Master your routines, one day at a time.</p>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn btn-primary" (click)="openCreateModal()">
+        <span class="icon">+</span> Create New Habit
+      </button>
+    </div>
+  </header>
+
+  <section class="habit-grid">
+    @for (habit of habits(); track habit.id) {
+      <div class="habit-card">
+        <div class="card-header">
+          <h3 class="habit-name">{{ habit.name }}</h3>
+          <div class="card-actions">
+            <button class="action-icon check" [class.checked]="isHabitCheckedToday(habit)" (click)="toggleHabit(habit)">
+              ✓
+            </button>
+            <button class="action-icon trash" (click)="deleteHabit(habit.id)">
+              🗑
+            </button>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <p class="habit-description">{{ habit.description }}</p>
+          <div class="streak-badge">
+            <span class="fire">🔥</span>
+            <span class="count">{{ habit.streak || 0 }} Day Streak</span>
+          </div>
+        </div>
+        
+        <div class="calendar-section">
+          <p class="calendar-label">Last 7 Days</p>
+          <div class="squares-container">
+            <!-- Mock 7 days. If streak > index, we make it green -->
+            @for (day of [1,2,3,4,5,6,7]; track day) {
+              <div class="square" [class.active]="(habit.streak || 0) >= (8 - day)"></div>
+            }
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <h2>No habits yet</h2>
+        <p>Your journey begins with a single step. Create a new habit above!</p>
+      </div>
+    }
+  </section>
+</main>
+
+@if (showCreateModal()) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <h2>Create New Habit</h2>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="newHabitName" placeholder="e.g. Read a book">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" [(ngModel)]="newHabitDescription" placeholder="Optional details">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" (click)="closeCreateModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="createHabit()">Create</button>
+      </div>
+    </div>
+  </div>
+}
